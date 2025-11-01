@@ -3,7 +3,7 @@ To resolve the issue you can run the windows command.
 sysprep /oobe /generalize /shutdown
 
 
-If the issue didn't get resolve run the below commands:
+If the issue didn't get resolve run the below commands: [RUn this on powershell terminal]
 
 # --- Stop Windows Update services ---
 net stop wuauserv
@@ -48,3 +48,15 @@ DISM /online /cleanup-image /startcomponentcleanup /resetbase
 Remove-Item -Recurse -Force "C:\Windows\System32\Sysprep\Panther" -ErrorAction SilentlyContinue
 
 Write-Host "Cleanup complete. You can now safely run Sysprep."
+
+
+then run,
+
+shutdown /r /t 0
+
+once system rebboted run below commands:
+
+cd C:\Windows\System32\Sysprep
+sysprep /oobe /generalize /shutdown
+
+
