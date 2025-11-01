@@ -1,0 +1,50 @@
+When you clone windows image in VMware. Both the machines has same SID ID. The problem arises when you try to join the other cloned machine to AD (domain joined). On joining the domain it fails with the error message that can't join the domain because of the same SID.
+To resolve the issue you can run the windows command. 
+sysprep /oobe /generalize /shutdown
+
+
+If the issue didn't get resolve run the below commands:
+
+# --- Stop Windows Update services ---
+net stop wuauserv
+net stop bits
+
+# --- Remove Microsoft Edge & other problematic UWP apps ---
+$apps = @(
+    "Microsoft.MicrosoftEdge.Stable",
+    "Microsoft.Xbox*",
+    "Microsoft.People",
+    "Microsoft.ZuneMusic",
+    "Microsoft.ZuneVideo",
+    "Microsoft.GetHelp",
+    "Microsoft.Getstarted",
+    "Microsoft.Todos",
+    "Microsoft.Microsoft3DViewer",
+    "Microsoft.MSPaint",
+    "Microsoft.StorePurchaseApp",
+    "Microsoft.WindowsStore"
+)
+
+foreach ($app in $apps) {
+    Get-AppxPackage -Name $app -AllUsers | Remove-AppxPackage -ErrorAction SilentlyContinue
+    Get-AppxProvisionedPackage -Online | Where-Object {$_.DisplayName -like $app} | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
+}
+
+# --- Reset Sysprep registry values ---
+$path = "HKLM:\SYSTEM\Setup\Status\SysprepStatus"
+if (!(Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
+New-ItemProperty -Path $path -Name CleanupState -PropertyType DWord -Value 2 -Force | Out-Null
+New-ItemProperty -Path $path -Name GeneralizationState -PropertyType DWord -Value 7 -Force | Out-Null
+
+# --- Remove leftover Upgrade or Reseal keys ---
+$setupPath = "HKLM:\SYSTEM\Setup"
+if (Test-Path "$setupPath\Upgrade") { Remove-Item -Path "$setupPath\Upgrade" -Recurse -Force }
+if (Test-Path "$setupPath\Reseal") { Remove-Item -Path "$setupPath\Reseal" -Recurse -Force }
+
+# --- Clean component store ---
+DISM /online /cleanup-image /startcomponentcleanup /resetbase
+
+# --- Delete Panther folder ---
+Remove-Item -Recurse -Force "C:\Windows\System32\Sysprep\Panther" -ErrorAction SilentlyContinue
+
+Write-Host "Cleanup complete. You can now safely run Sysprep."
