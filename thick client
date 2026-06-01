@@ -1,0 +1,4 @@
+Quick search:
+
+# Every file that could contain a secret
+Get-ChildItem -Recurse -Include *.cmd,*.bat,*.xml,*.ini,*.properties,*.conf,*.txt,*.cnf -Exclude logfile.txt | Select-Object FullName, Length, LastWriteTime | Sort-Object FullName
