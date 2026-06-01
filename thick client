@@ -2,3 +2,6 @@ Quick search:
 
 # Every file that could contain a secret
 Get-ChildItem -Recurse -Include *.cmd,*.bat,*.xml,*.ini,*.properties,*.conf,*.txt,*.cnf -Exclude logfile.txt | Select-Object FullName, Length, LastWriteTime | Sort-Object FullName
+
+$patterns = "password|pwd|passwd|secret|key|credential|auth|token|jdbc|connectionstring|truststorepassword|keystorepassword|storepass|user=|pass=|username"
+Get-ChildItem -Recurse -Include *.cmd,*.bat,*.xml,*.ini,*.properties,*.conf,*.txt -Exclude logfile.txt | Select-String -Pattern $patterns -CaseSensitive:$false -SimpleMatch
