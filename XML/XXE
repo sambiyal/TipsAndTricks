@@ -1,0 +1,2 @@
+XML/XXE attack vectors
+<?xml version="1.0"?><!DOCTYPE soapenv:Envelope [<!ENTITY probe "XML_ENTITY_CANARY_7F31">]><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://suncorp.com.au/services/address/wsdl/0"><soapenv:Header/><soapenv:Body><ns:SearchRequest><CountryCode>AUS</CountryCode><Search>&probe;</Search><Datasource>PAF</Datasource></ns:SearchRequest></soapenv:Body></soapenv:Envelope>
