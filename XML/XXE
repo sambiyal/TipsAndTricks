@@ -25,3 +25,8 @@ gcloud --version
 
 cd "/mnt/c/Users/IAG CSG Tester/Documents/Projects"
 ./script.sh --agent geap-pentest-agent --message "test"
+
+
+------------------
+
+https://github.com/astral-sh/uv/releases/latest/download/uv-x86_64-unknown-linux-gnu.tar.gz
